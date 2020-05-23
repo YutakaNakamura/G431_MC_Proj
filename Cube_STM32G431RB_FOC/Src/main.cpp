@@ -26,7 +26,23 @@
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
+#include <stdio.h>
+#include "InterruptHandler.hpp"
 /* USER CODE BEGIN Includes */
+
+void ADCTest() {
+	  char buf[] = "■ADC interrupt\r\n";
+	  HAL_UART_Transmit(&hlpuart1, (uint8_t*)buf, sizeof(buf), 1000);
+
+	  volatile int adc1 = ADC1 -> JDR1;
+	  volatile int adc2 = ADC1 -> JDR2;
+	  volatile int adc3 = ADC1 -> JDR3;
+
+	  char str[100] = {0};
+
+	  sprintf(str,"adc1：%d, adc2:%d, adc3:%d\r\n",adc1,adc2,adc3);
+	  HAL_UART_Transmit(&hlpuart1, (uint8_t*)str, sizeof(str), 1000);
+}
 
 template<typename T> class mySqrt{
 private:
@@ -82,6 +98,7 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 
+	InterruptHandler::GetInstance().SetADCCpltInterrptFunc(ADCTest);
   /* USER CODE END 1 */
   
 

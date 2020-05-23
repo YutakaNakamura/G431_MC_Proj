@@ -199,26 +199,16 @@ void SysTick_Handler(void)
 /* please refer to the startup file (startup_stm32g4xx.s).                    */
 /******************************************************************************/
 
-#include "usart.h"
+#include "InterruptHandler.hpp"
+
+
 /**
   * @brief This function handles ADC1 and ADC2 global interrupt.
   */
 void ADC1_2_IRQHandler(void)
 {
   /* USER CODE BEGIN ADC1_2_IRQn 0 */
-
-	  char buf[] = "■ADC interrupt\r\n";
-	  HAL_UART_Transmit(&hlpuart1, (uint8_t*)buf, sizeof(buf), 1000);
-
-	  volatile int adc1 = ADC1 -> JDR1;
-	  volatile int adc2 = ADC1 -> JDR2;
-	  volatile int adc3 = ADC1 -> JDR3;
-
-	  char str[100] = {0};
-
-	  sprintf(str,"adc1：%d, adc2:%d, adc3:%d\r\n",adc1,adc2,adc3);
-	  HAL_UART_Transmit(&hlpuart1, (uint8_t*)str, sizeof(str), 1000);
-
+	InterruptHandler::GetInstance().ADCCpltFunc();
   /* USER CODE END ADC1_2_IRQn 0 */
   HAL_ADC_IRQHandler(&hadc1);
   HAL_ADC_IRQHandler(&hadc2);
