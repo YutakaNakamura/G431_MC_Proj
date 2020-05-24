@@ -198,10 +198,7 @@ void SysTick_Handler(void)
 /* For the available peripheral interrupt handler names,                      */
 /* please refer to the startup file (startup_stm32g4xx.s).                    */
 /******************************************************************************/
-
 #include "InterruptHandler.hpp"
-
-
 /**
   * @brief This function handles ADC1 and ADC2 global interrupt.
   */

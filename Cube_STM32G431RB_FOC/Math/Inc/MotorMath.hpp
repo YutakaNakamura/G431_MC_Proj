@@ -32,8 +32,8 @@ template <typename T>
 static inline std::array<T, 2> clarkTransform (const std::array<T, 3> &pVector) {
 	//mIalpha = mIu - (mIv + mIw)/2;
 	//mIbeta = (mIv - mIw)* 1.7320508f/2;
-	return { ( 0.81649658 * ( pVector.at(0) - ((pVector.at(1) + pVector.at(2))/2)  ) ),
-				  ( 0.81649658 * ( (pVector.at(1) - pVector.at(2)) * 1.7320508/2 ) ) };
+	return { ( (T)0.81649658 * ( pVector.at(0) - ((pVector.at(1) + pVector.at(2))/2)  ) ),
+				  ( (T)0.81649658 * ( (pVector.at(1) - pVector.at(2)) * (T)1.7320508/2 ) ) };
 };
 
 template <typename T>
@@ -78,6 +78,7 @@ static inline std::array<float, 3> InvclarkTransform (const std::array<float, 2>
 	return uvw;
 };
 
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 //input [a,b],VCC
 //output Duty[u,v,w]
 template <typename T>

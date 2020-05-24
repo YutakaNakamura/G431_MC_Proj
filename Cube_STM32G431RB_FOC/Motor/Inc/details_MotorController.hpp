@@ -38,7 +38,7 @@ std::array<T, 3> MotorController<T>::Calculate(const T &pVBus, const std::array<
 
 	std::array<T, 2> Ialphabeta = MotorMath::clarkTransform(pIuvw);
 
-	std::array<T, 2> Vganmadelta = {0,5};
+	std::array<T, 2> Vganmadelta = {0,pInputTarget};
 
 	T theta = mIntegrator.Integrate2PiMod(1 * 2 * 3.14);
 

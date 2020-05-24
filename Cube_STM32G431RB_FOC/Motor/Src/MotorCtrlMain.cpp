@@ -23,28 +23,31 @@ MotorCtrlMain::~MotorCtrlMain() {
 
 
 void MotorCtrlMain::MotorCtrlInit() {
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_10, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_11, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, GPIO_PIN_SET);
+
 	TIMCtrl::InitPWM();
-	ADCCtrl::InitADC();
+	ADCCtrl::GetInstance().InitADC();
 };
 
-#include <stdio.h>
-#include "usart.h"
-
-
-
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#pragma GCC diagnostic ignored "-Wunused-variable"
 void MotorCtrlMain::MotorCtrl() {
 
-	volatile int adc1 = ADCCtrl::GetUphaseADCVal();
-	volatile int adc2 = ADCCtrl::GetVphaseADCVal();
-	volatile int adc3 = ADCCtrl::GetWphaseADCVal();
+	volatile int adc1 = ADCCtrl::GetInstance().GetUphaseADCVal();
+	volatile int adc2 = ADCCtrl::GetInstance().GetVphaseADCVal();
+	volatile int adc3 = ADCCtrl::GetInstance().GetWphaseADCVal();
 
-	std::array<float,3> Iuvw;
+	float VBusADC = (float)ADCCtrl::GetInstance().StartDCLinkADC();
 	float VBus = 12;
 
-	std::array<float,3> Vuvw;
+	float UIinputADC = (float)ADCCtrl::GetInstance().StartUserInputADC();
+	float inputVal = UIinputADC/4095 * VBus/2;
 
-	float input=0;
-	Vuvw = mMotorController.Calculate(VBus,Iuvw,input);
+	std::array<float,3> Iuvw;
+	std::array<float,3> Vuvw;
+	Vuvw = mMotorController.Calculate(VBus,Iuvw,inputVal);
 
 	float Uduty = Vuvw[0];
 	float Vduty = Vuvw[1];
@@ -53,20 +56,5 @@ void MotorCtrlMain::MotorCtrl() {
 	TIMCtrl::SetUphaseDuty(Uduty);
 	TIMCtrl::SetVphaseDuty(Vduty);
 	TIMCtrl::SetWphaseDuty(Wduty);
-
-//		TIMCtrl::SetUphaseDuty(0.25);
-//		TIMCtrl::SetVphaseDuty(0.5);
-//		TIMCtrl::SetWphaseDuty(0.75);
-//		TIMCtrl::SetADCTRGDuty(0.99);
-//
-//	  char buf[] = "■ADC interrupt\r\n";
-//	  HAL_UART_Transmit(&hlpuart1, (uint8_t*)buf, sizeof(buf), 1000);
-//
-//
-//	  char str[100] = {0};
-//
-//	  sprintf(str,"adc1：%d, adc2:%d, adc3:%d\r\n",adc1,adc2,adc3);
-//	  HAL_UART_Transmit(&hlpuart1, (uint8_t*)str, sizeof(str), 1000);
-
 
 };

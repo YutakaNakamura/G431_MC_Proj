@@ -65,8 +65,6 @@ void Error_Handler(void);
 #define Curr_fdbk_w_GPIO_Port GPIOC
 #define Curr_fdbk_v_Pin GPIO_PIN_1
 #define Curr_fdbk_v_GPIO_Port GPIOC
-#define Temp_fdbk_Pin GPIO_PIN_2
-#define Temp_fdbk_GPIO_Port GPIOC
 #define ADC_TRG_Pin GPIO_PIN_3
 #define ADC_TRG_GPIO_Port GPIOC
 #define Curr_fdbk_u_Pin GPIO_PIN_0

@@ -108,7 +108,6 @@ int main(void)
 	InterruptHandler::GetInstance().SetADCCpltInterrptFunc(func);
 	mMotorCtrlMain.MotorCtrlInit();
 
-
 //    TIM1 -> PSC = 17000;
 //    TIM1 -> ARR = 10000;
 
@@ -126,6 +125,7 @@ int main(void)
   }
   /* USER CODE END 3 */
 }
+
 
 /**
   * @brief System Clock Configuration

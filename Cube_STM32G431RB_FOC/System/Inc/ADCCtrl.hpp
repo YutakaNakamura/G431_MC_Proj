@@ -11,9 +11,32 @@
 #include "adc.h"
 #include "stm32g4xx_hal.h"
 
-namespace ADCCtrl {
+#include <functional>
+#include "InterruptHandler.hpp"
 
-	static inline void InitADC() {
+class ADCCtrl final {
+private:
+	ADCCtrl() = default;
+	~ADCCtrl() = default;
+
+
+
+public:
+	ADCCtrl(const ADCCtrl&) = delete;
+	ADCCtrl& operator=(const ADCCtrl&) = delete;
+	ADCCtrl(ADCCtrl&&) = delete;
+	ADCCtrl& operator=(ADCCtrl&&) = delete;
+
+	static ADCCtrl& GetInstance() {
+		static ADCCtrl instance;
+		return instance;
+	}
+
+private:
+
+public:
+
+	inline void InitADC() {
 		MX_ADC1_Init();
 		MX_ADC2_Init();
 
@@ -23,48 +46,35 @@ namespace ADCCtrl {
 		HAL_ADCEx_InjectedStart_IT(&hadc1);
 	};
 
-	static inline void DeInitADC() {
+	inline void DeInitADC() {
 		HAL_ADCEx_InjectedStop_IT(&hadc1);
 		HAL_ADC_DeInit(&hadc2);
 		HAL_ADC_DeInit(&hadc1);
 	};
 
-	static inline int GetUphaseADCVal() {
+	inline int GetUphaseADCVal() {
 		volatile int adcval = ADC1 -> JDR1;
 		return adcval;
 	};
 
-	static inline int GetVphaseADCVal() {
+	inline int GetVphaseADCVal() {
 		volatile int adcval = ADC1 -> JDR2;
 		return adcval;
 	};
 
-	static inline int GetWphaseADCVal() {
+	inline int GetWphaseADCVal() {
 		volatile int adcval = ADC1 -> JDR3;
 		return adcval;
 	};
 
-	//TODO:regular channel
-	static inline void StartDCLinkAndUserInputADC() {
+	inline int StartUserInputADC(void) {
 		HAL_ADC_Start(&hadc1);
-		return;
+		return  HAL_ADC_GetValue(&hadc1);
 	};
 
-	static inline int GetDCLinkADCVal() {
-		return HAL_ADC_GetValue(&hadc1);
-	};
-
-	static inline int GetUserInputADCVal() {
-		return HAL_ADC_GetValue(&hadc1);
-	};
-
-	static inline void StartTempADC() {
+	inline int StartDCLinkADC(void) {
 		HAL_ADC_Start(&hadc2);
-		return;
-	};
-
-	static inline int GetTempADCVal() {
-		return HAL_ADC_GetValue(&hadc2);
+		return  HAL_ADC_GetValue(&hadc2);
 	};
 
 };

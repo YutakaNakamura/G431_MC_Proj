@@ -45,7 +45,7 @@ void MX_ADC1_Init(void)
   hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   hadc1.Init.LowPowerAutoWait = DISABLE;
   hadc1.Init.ContinuousConvMode = DISABLE;
-  hadc1.Init.NbrOfConversion = 2;
+  hadc1.Init.NbrOfConversion = 1;
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
@@ -65,20 +65,12 @@ void MX_ADC1_Init(void)
   }
   /** Configure Regular Channel 
   */
-  sConfig.Channel = ADC_CHANNEL_2;
+  sConfig.Channel = ADC_CHANNEL_12;
   sConfig.Rank = ADC_REGULAR_RANK_1;
   sConfig.SamplingTime = ADC_SAMPLETIME_2CYCLES_5;
   sConfig.SingleDiff = ADC_SINGLE_ENDED;
   sConfig.OffsetNumber = ADC_OFFSET_NONE;
   sConfig.Offset = 0;
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /** Configure Regular Channel 
-  */
-  sConfig.Channel = ADC_CHANNEL_12;
-  sConfig.Rank = ADC_REGULAR_RANK_2;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -149,7 +141,7 @@ void MX_ADC2_Init(void)
   }
   /** Configure Regular Channel 
   */
-  sConfig.Channel = ADC_CHANNEL_8;
+  sConfig.Channel = ADC_CHANNEL_2;
   sConfig.Rank = ADC_REGULAR_RANK_1;
   sConfig.SamplingTime = ADC_SAMPLETIME_2CYCLES_5;
   sConfig.SingleDiff = ADC_SINGLE_ENDED;
@@ -186,7 +178,6 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* adcHandle)
     PC0     ------> ADC1_IN6
     PC1     ------> ADC1_IN7
     PA0     ------> ADC1_IN1
-    PA1     ------> ADC1_IN2
     PB1     ------> ADC1_IN12 
     */
     GPIO_InitStruct.Pin = Curr_fdbk_w_Pin|Curr_fdbk_v_Pin;
@@ -194,10 +185,10 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* adcHandle)
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-    GPIO_InitStruct.Pin = Curr_fdbk_u_Pin|VBUS_Pin;
+    GPIO_InitStruct.Pin = Curr_fdbk_u_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    HAL_GPIO_Init(Curr_fdbk_u_GPIO_Port, &GPIO_InitStruct);
 
     GPIO_InitStruct.Pin = SPEED_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
@@ -222,14 +213,14 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* adcHandle)
       __HAL_RCC_ADC12_CLK_ENABLE();
     }
   
-    __HAL_RCC_GPIOC_CLK_ENABLE();
+    __HAL_RCC_GPIOA_CLK_ENABLE();
     /**ADC2 GPIO Configuration    
-    PC2     ------> ADC2_IN8 
+    PA1     ------> ADC2_IN2 
     */
-    GPIO_InitStruct.Pin = Temp_fdbk_Pin;
+    GPIO_InitStruct.Pin = VBUS_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(Temp_fdbk_GPIO_Port, &GPIO_InitStruct);
+    HAL_GPIO_Init(VBUS_GPIO_Port, &GPIO_InitStruct);
 
     /* ADC2 interrupt Init */
     HAL_NVIC_SetPriority(ADC1_2_IRQn, 0, 0);
@@ -258,12 +249,11 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
     PC0     ------> ADC1_IN6
     PC1     ------> ADC1_IN7
     PA0     ------> ADC1_IN1
-    PA1     ------> ADC1_IN2
     PB1     ------> ADC1_IN12 
     */
     HAL_GPIO_DeInit(GPIOC, Curr_fdbk_w_Pin|Curr_fdbk_v_Pin);
 
-    HAL_GPIO_DeInit(GPIOA, Curr_fdbk_u_Pin|VBUS_Pin);
+    HAL_GPIO_DeInit(Curr_fdbk_u_GPIO_Port, Curr_fdbk_u_Pin);
 
     HAL_GPIO_DeInit(SPEED_GPIO_Port, SPEED_Pin);
 
@@ -292,9 +282,9 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
     }
   
     /**ADC2 GPIO Configuration    
-    PC2     ------> ADC2_IN8 
+    PA1     ------> ADC2_IN2 
     */
-    HAL_GPIO_DeInit(Temp_fdbk_GPIO_Port, Temp_fdbk_Pin);
+    HAL_GPIO_DeInit(VBUS_GPIO_Port, VBUS_Pin);
 
     /* ADC2 interrupt Deinit */
   /* USER CODE BEGIN ADC2:ADC1_2_IRQn disable */

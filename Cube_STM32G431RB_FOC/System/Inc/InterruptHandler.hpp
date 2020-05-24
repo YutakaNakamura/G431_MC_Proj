@@ -29,6 +29,8 @@ public:
 private:
 	//ADCInterruptFunc
 	std::function<void()> mADCCpltInterruptFunc;
+	//DMA1InterruptFunc
+	std::function<void()> mDMA1CpltInterruptFunc;
 
 public:
 
@@ -38,6 +40,14 @@ public:
 
 	void ADCCpltFunc() {
 		mADCCpltInterruptFunc();
+	};
+
+	void SetDMA1CpltInterrptFunc(std::function<void()> &pDMA1CpltInterruptFunc) {
+		mDMA1CpltInterruptFunc = pDMA1CpltInterruptFunc;
+	};
+
+	void DMA1CpltFunc() {
+		mDMA1CpltInterruptFunc();
 	};
 
 };
