@@ -64,6 +64,8 @@ Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_tim.c \
 Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_tim_ex.c \
 Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_pwr.c \
 Src/system_stm32g4xx.c \
+SEGGER/Src/SEGGER_RTT_printf.c \
+SEGGER/Src/SEGGER_RTT.c \
 
 # CPP sources
 CPP_SOURCES = \
@@ -141,6 +143,7 @@ C_INCLUDES =  \
 -ISystem/Inc \
 -IMotor/Inc \
 -IMath/Inc \
+-ISEGGER/Inc \
 
 # C++ includes
 CPP_INCLUDES = $(C_INCLUDES)

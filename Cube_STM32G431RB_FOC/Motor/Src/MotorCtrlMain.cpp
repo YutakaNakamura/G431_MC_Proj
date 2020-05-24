@@ -35,19 +35,27 @@ void MotorCtrlMain::MotorCtrlInit() {
 #pragma GCC diagnostic ignored "-Wunused-variable"
 void MotorCtrlMain::MotorCtrl() {
 
+	std::array<float,3> Iuvw;
+
 	volatile int adc1 = ADCCtrl::GetInstance().GetUphaseADCVal();
 	volatile int adc2 = ADCCtrl::GetInstance().GetVphaseADCVal();
 	volatile int adc3 = ADCCtrl::GetInstance().GetWphaseADCVal();
 
+	Iuvw[0] = mConvertADCtoCurrent.Current(adc1);
+	Iuvw[1] = mConvertADCtoCurrent.Current(adc2);
+	Iuvw[2] = mConvertADCtoCurrent.Current(adc3);
+
 	float VBusADC = (float)ADCCtrl::GetInstance().StartDCLinkADC();
-	float VBus = 12;
+	float VBus = VBusADC * ADCVoltageRatio * ((VBusR1 + VBusR2)/VBusR2);
 
 	float UIinputADC = (float)ADCCtrl::GetInstance().StartUserInputADC();
 	float inputVal = UIinputADC/4095 * VBus/2;
 
-	std::array<float,3> Iuvw;
+	//std::array<float,3> Iuvw;
 	std::array<float,3> Vuvw;
-	Vuvw = mMotorController.Calculate(VBus,Iuvw,inputVal);
+
+	MotorInfo<float> motorInfo;
+	Vuvw = mMotorController.Calculate(VBus,Iuvw,inputVal,motorInfo);
 
 	float Uduty = Vuvw[0];
 	float Vduty = Vuvw[1];
@@ -56,5 +64,7 @@ void MotorCtrlMain::MotorCtrl() {
 	TIMCtrl::SetUphaseDuty(Uduty);
 	TIMCtrl::SetVphaseDuty(Vduty);
 	TIMCtrl::SetWphaseDuty(Wduty);
+
+	mDebugCtrl.RTTOutput(motorInfo);
 
 };

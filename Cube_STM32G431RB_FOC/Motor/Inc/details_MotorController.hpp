@@ -34,11 +34,16 @@ MotorController<T>::~MotorController() {
 }
 
 template<typename T>
-std::array<T, 3> MotorController<T>::Calculate(const T &pVBus, const std::array<T, 3> &pIuvw, const T &pInputTarget) {
+std::array<T, 3> MotorController<T>::Calculate(const T &pVBus, const std::array<T, 3> &pIuvw, const T &pInputTarget, MotorInfo<T> &pMotorInfo) {
+
+	mMotorInfo.SetIuvw(pIuvw);
 
 	std::array<T, 2> Ialphabeta = MotorMath::clarkTransform(pIuvw);
+	mMotorInfo.SetIab(Ialphabeta);
 
 	std::array<T, 2> Vganmadelta = {0,pInputTarget};
+
+	mMotorInfo.SetVganmadelta(Vganmadelta);
 
 	T theta = mIntegrator.Integrate2PiMod(1 * 2 * 3.14);
 
@@ -47,6 +52,9 @@ std::array<T, 3> MotorController<T>::Calculate(const T &pVBus, const std::array<
 
 	std::array<T, 3> output = MotorMath::SVM(Valphabeta, pVBus);
 
+	mMotorInfo.SetVuvw(output);
+
+	pMotorInfo = mMotorInfo;
 	return output;
 }
 

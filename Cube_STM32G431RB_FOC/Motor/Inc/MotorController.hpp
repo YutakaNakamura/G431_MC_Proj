@@ -12,19 +12,25 @@
 
 #include "MotorCtrlDefPack.hpp"
 
+#include "MotorInfo.hpp"
+
 #include "HighFreqVoltageCommander.hpp"
 
 template<typename T>
 class MotorController {
 private:
+	MotorInfo<T> mMotorInfo;
+
 	HighFreqVoltageCommander<T> mHFVC;
 	DiscreteTimeIntegrator<T> mIntegrator;
+
+
 
 public:
 	MotorController();
 	virtual ~MotorController();
 
-	std::array<T, 3> Calculate(const T &pVBus, const std::array<T, 3> &pIuvw, const T &pInputTarget);
+	std::array<T, 3> Calculate(const T &pVBus, const std::array<T, 3> &pIuvw, const T &pInputTarget, MotorInfo<T> &pMotorInfo);
 };
 
 
