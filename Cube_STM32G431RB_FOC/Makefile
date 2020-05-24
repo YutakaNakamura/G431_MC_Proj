@@ -36,16 +36,40 @@ endif
 ######################################
 # C sources
 C_SOURCES = \
-$(wildcard Src/*.c) \
-$(filter-out Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_msp_template.c \
-			Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_timebase_tim_template.c,\
-			 $(wildcard Drivers/STM32G4xx_HAL_Driver/Src/*.c)) \ #Driverからは使用例のtemplateファイルを除く
-			 
+Src/gpio.c \
+Src/adc.c \
+Src/usart.c \
+Src/sys.c \
+Src/tim.c \
+Src/stm32g4xx_hal_msp.c \
+Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_gpio.c \
+Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_adc.c \
+Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_adc_ex.c \
+Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_adc.c \
+Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal.c \
+Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_rcc.c \
+Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_rcc_ex.c \
+Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_flash.c \
+Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_flash_ex.c \
+Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_flash_ramfunc.c \
+Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_exti.c \
+Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_dma.c \
+Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_dma_ex.c \
+Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_pwr.c \
+Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_pwr_ex.c \
+Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_cortex.c \
+Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_uart.c \
+Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_uart_ex.c \
+Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_tim.c \
+Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_tim_ex.c \
+Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_pwr.c \
+Src/system_stm32g4xx.c \
+
 # CPP sources
 CPP_SOURCES = \
 $(wildcard Src/*.cpp) \
 $(wildcard System/Src/*.cpp) \
-#$(wildcard Motor/Src/*.cpp) \
+$(wildcard Motor/Src/*.cpp) \
 #$(wildcard Math/Src/*.cpp) \
 #$(wildcard System/Src/*.cpp) \
 
@@ -97,6 +121,7 @@ MCU = $(CPU) -mthumb $(FPU) $(FLOAT-ABI)
 C_DEFS =  \
 -DUSE_HAL_DRIVER \
 -DSTM32G431xx \
+-D__FPU_PRESENT \
 '-D__weak=__attribute__((weak))' \
 '-D__packed=__attribute__((__packed__))'
 # C++ defines
@@ -112,7 +137,10 @@ C_INCLUDES =  \
 -IDrivers/STM32G4xx_HAL_Driver/Inc/Legacy \
 -IDrivers/CMSIS/Device/ST/STM32G4xx/Include \
 -IDrivers/CMSIS/Include \
+-IDrivers/CMSIS/DSP/Include \
 -ISystem/Inc \
+-IMotor/Inc \
+-IMath/Inc \
 
 # C++ includes
 CPP_INCLUDES = $(C_INCLUDES)
@@ -151,8 +179,12 @@ LDSCRIPT = STM32G431RBTx_FLASH.ld
 #LIBS = -lc -lm -lnosys 
 LIBS = -lc -lm -lrdimon
 LIBS += -lstdc++
+LIBS += -larm_cortexM4lf_math
 
-LIBDIR = 
+LIBDIR = \
+-LDrivers/CMSIS/Lib/GCC \
+#-LDrivers/CMSIS/Lib/GCC/arm_cortexM4lf_math.a \
+
 #LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
 LDFLAGS = $(MCU) -specs=nosys.specs -specs=rdimon.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
 

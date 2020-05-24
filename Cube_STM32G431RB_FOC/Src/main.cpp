@@ -26,37 +26,12 @@
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
-#include <stdio.h>
+
 #include "InterruptHandler.hpp"
+#include "MotorCtrlMain.hpp"
+
 /* USER CODE BEGIN Includes */
 
-void ADCTest() {
-	  char buf[] = "■ADC interrupt\r\n";
-	  HAL_UART_Transmit(&hlpuart1, (uint8_t*)buf, sizeof(buf), 1000);
-
-	  volatile int adc1 = ADC1 -> JDR1;
-	  volatile int adc2 = ADC1 -> JDR2;
-	  volatile int adc3 = ADC1 -> JDR3;
-
-	  char str[100] = {0};
-
-	  sprintf(str,"adc1：%d, adc2:%d, adc3:%d\r\n",adc1,adc2,adc3);
-	  HAL_UART_Transmit(&hlpuart1, (uint8_t*)str, sizeof(str), 1000);
-}
-
-template<typename T> class mySqrt{
-private:
-	T mOldVal;
-public:
-	mySqrt(T pInitVal) {
-		mOldVal = pInitVal;
-	}
-	constexpr T Calc(const T &pInput) {
-		T val = (mOldVal + pInput/mOldVal) * (T)0.5;
-		mOldVal = val;
-		return val;
-	}
-};
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -98,7 +73,8 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 
-	InterruptHandler::GetInstance().SetADCCpltInterrptFunc(ADCTest);
+
+
   /* USER CODE END 1 */
   
 
@@ -127,56 +103,26 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
 
+	MotorCtrlMain mMotorCtrlMain;
+	std::function<void()> func = [&](){ return mMotorCtrlMain.MotorCtrl(); };
+	InterruptHandler::GetInstance().SetADCCpltInterrptFunc(func);
+	mMotorCtrlMain.MotorCtrlInit();
 
 
-  if (HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1) != HAL_OK)
-  {
-   Error_Handler();
-  }
-  if (HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2) != HAL_OK)
-  {
-   Error_Handler();
-  }
-  if (HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3) != HAL_OK)
-  {
-   Error_Handler();
-  }
+//    TIM1 -> PSC = 17000;
+//    TIM1 -> ARR = 10000;
 
-  //disableにすれば出力されない
-  if (HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4) != HAL_OK)
-  {
-   Error_Handler();
-  }
-
-  TIM1 -> PSC = 17000;
-  TIM1 -> ARR = 10000;
-  TIM1 -> CCR1 = 7500;
-  TIM1 -> CCR2 = 5000;
-  TIM1 -> CCR3 = 2500;
-  TIM1 -> CCR4 = 9990;
-
-  HAL_ADCEx_InjectedStart_IT(&hadc1);
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  mySqrt<float> msqrt(0.1f);
-
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  char buf[] = "USART TEST\r\n";
-	  HAL_UART_Transmit(&hlpuart1, (uint8_t*)buf, sizeof(buf), 1000);
 
-	  float sqrt5 = msqrt.Calc(5.0f);
-	  int delay = 100 * sqrt5;
-	  HAL_Delay(delay);
-	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
-	  HAL_Delay(delay);
-	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
   }
   /* USER CODE END 3 */
 }
