@@ -31,6 +31,8 @@ private:
 	std::function<void()> mADCCpltInterruptFunc;
 	//DMA1InterruptFunc
 	std::function<void()> mDMA1CpltInterruptFunc;
+	//GPIOInterruptFunc
+	std::function<void()> mGPIOInterruptFunc;
 
 public:
 
@@ -49,6 +51,16 @@ public:
 	void DMA1CpltFunc() {
 		mDMA1CpltInterruptFunc();
 	};
+
+	void SetGPIOInterrptFunc(std::function<void()> &pGPIOInterruptFunc) {
+		mGPIOInterruptFunc = pGPIOInterruptFunc;
+	};
+
+	void GPIOInterrptFunc() {
+		mGPIOInterruptFunc();
+	};
+
+
 
 };
 

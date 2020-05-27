@@ -20,7 +20,8 @@ private:
 
 	MotorController<float> mMotorController;
 
-	DebugCtrl mDebugCtrl;
+	bool isON = false;
+	float mRPM=0;
 
 public:
 	MotorCtrlMain();
@@ -29,6 +30,7 @@ public:
 	static void MotorCtrlInit();
 	void MotorCtrl();
 
+	void toggleAcceleration();
 };
 
 #endif /* MOTOR_INC_MOTORCTRLMAIN_HPP_ */

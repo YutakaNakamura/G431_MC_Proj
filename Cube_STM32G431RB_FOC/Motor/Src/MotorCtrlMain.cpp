@@ -14,6 +14,9 @@
 #include "InterruptHandler.hpp"
 
 MotorCtrlMain::MotorCtrlMain() {
+	std::function<void()> func = [&](){ return this->toggleAcceleration(); };
+	InterruptHandler::GetInstance().SetGPIOInterrptFunc(func);
+
 }
 
 MotorCtrlMain::~MotorCtrlMain() {
@@ -51,11 +54,34 @@ void MotorCtrlMain::MotorCtrl() {
 	float UIinputADC = (float)ADCCtrl::GetInstance().StartUserInputADC();
 	float inputVal = UIinputADC/4095 * VBus/2;
 
-	//std::array<float,3> Iuvw;
 	std::array<float,3> Vuvw;
 
-	MotorInfo<float> motorInfo;
-	Vuvw = mMotorController.Calculate(VBus,Iuvw,inputVal,motorInfo);
+	if(isON) {
+
+		if(mRPM <= 300) {
+			mRPM = mRPM + 0.003;
+		}
+
+	} else {
+		if(mRPM >= 0) {
+			mRPM = mRPM - 0.006;
+		} else
+			mRPM = 0;
+
+	}
+
+//	if(mRPM <= 200) {
+//		mRPM = mRPM + 0.003;
+//	}
+//
+//	mRPM = 1;
+//	if(inputVal > 1) {
+//		inputVal = 1.3;
+//	} else {
+//		inputVal = 0;
+//	}
+
+	Vuvw = mMotorController.Calculate(VBus,Iuvw,inputVal,mRPM);
 
 	float Uduty = Vuvw[0];
 	float Vduty = Vuvw[1];
@@ -65,6 +91,14 @@ void MotorCtrlMain::MotorCtrl() {
 	TIMCtrl::SetVphaseDuty(Vduty);
 	TIMCtrl::SetWphaseDuty(Wduty);
 
-	mDebugCtrl.RTTOutput(motorInfo);
+	DebugCtrl::GetInstance().RTTOutput();
 
 };
+
+void MotorCtrlMain::toggleAcceleration() {
+	if(isON == true){
+		isON = false;
+	} else {
+		isON = true;
+	}
+}
