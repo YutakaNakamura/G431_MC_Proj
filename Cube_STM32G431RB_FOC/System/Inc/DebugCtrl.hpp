@@ -8,7 +8,7 @@
 #ifndef DEBUGCTRL_HPP_
 #define DEBUGCTRL_HPP_
 
-#include "MotorInfo.hpp"
+#include <string>
 #include "SEGGER_RTT.h"
 
 //class JScopeData {

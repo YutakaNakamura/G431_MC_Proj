@@ -34,8 +34,8 @@ void MotorCtrlMain::MotorCtrlInit() {
 	ADCCtrl::GetInstance().InitADC();
 };
 
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-#pragma GCC diagnostic ignored "-Wunused-variable"
+//#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+//#pragma GCC diagnostic ignored "-Wunused-variable"
 void MotorCtrlMain::MotorCtrl() {
 
 	std::array<float,3> Iuvw;
@@ -56,32 +56,21 @@ void MotorCtrlMain::MotorCtrl() {
 
 	std::array<float,3> Vuvw;
 
-	if(isON) {
-
-		if(mRPM <= 300) {
-			mRPM = mRPM + 0.003;
-		}
-
-	} else {
-		if(mRPM >= 0) {
-			mRPM = mRPM - 0.006;
-		} else
-			mRPM = 0;
-
-	}
-
-//	if(mRPM <= 200) {
-//		mRPM = mRPM + 0.003;
-//	}
+//	if(isON) {
 //
-//	mRPM = 1;
-//	if(inputVal > 1) {
-//		inputVal = 1.3;
+//		if(mRPM <= 300) {
+//			mRPM = mRPM + 0.003;
+//		}
+//
 //	} else {
-//		inputVal = 0;
+//		if(mRPM >= 0) {
+//			mRPM = mRPM - 0.006;
+//		} else
+//			mRPM = 0;
+//
 //	}
 
-	Vuvw = mMotorController.Calculate(VBus,Iuvw,inputVal,mRPM);
+	//Vuvw = ....
 
 	float Uduty = Vuvw[0];
 	float Vduty = Vuvw[1];

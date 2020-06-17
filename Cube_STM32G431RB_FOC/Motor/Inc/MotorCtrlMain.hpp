@@ -9,7 +9,7 @@
 #define MOTOR_INC_MOTORCTRLMAIN_HPP_
 
 #include "ConvertADCtoCurrent.hpp"
-#include "MotorController.hpp"
+//#include "MotorController.hpp"
 
 #include "DebugCtrl.hpp"
 
@@ -18,7 +18,7 @@ private:
 
 	ConvertADCtoCurrent<float> mConvertADCtoCurrent;
 
-	MotorController<float> mMotorController;
+	//MotorController<float> mMotorController;
 
 	bool isON = false;
 	float mRPM=0;

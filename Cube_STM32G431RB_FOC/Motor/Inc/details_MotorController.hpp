@@ -40,6 +40,13 @@ MotorController<T>::~MotorController() {
 template<typename T>
 std::array<T, 3> MotorController<T>::Calculate(const T &pVBus, const std::array<T, 3> &pIuvw, const T &pInputTarget, const T &pInputREV) {
 
+	float speed = pInputREV;
+
+	//T theta = mIntegrator.Integrate2PiMod(1 * 2 * 3.14);
+	T theta = mIntegrator.Integrate2PiMod(speed * 2 * 3.14);
+
+	float gdArg = theta;
+
 
 	DebugCtrl::GetInstance().mJScopeData.mIu = (int)1000 * pIuvw[0];
 	DebugCtrl::GetInstance().mJScopeData.mIv = (int)1000 * pIuvw[1];
@@ -50,18 +57,20 @@ std::array<T, 3> MotorController<T>::Calculate(const T &pVBus, const std::array<
 //	DebugCtrl::GetInstance().mJScopeData.mIa=Ialphabeta[0];
 //	DebugCtrl::GetInstance().mJScopeData.mIb=Ialphabeta[1];
 
-	std::array<T, 2> Vganmadelta = {0,pInputTarget};
+	std::array<float, 2> Iganmadelta = MotorMath::parkTransform(gdArg, Ialphabeta);
+
+
+	std::array<float, 2> Vganmadelta = {0,pInputTarget};
+
+	mObserver.SetIGanmaDelta(Iganmadelta);
+	mObserver.SetVGanmaDelta(Vganmadelta);
+	mObserver.Calculate();
 
 	DebugCtrl::GetInstance().mJScopeData.mVg = (int)1000 * Vganmadelta[0];
 	DebugCtrl::GetInstance().mJScopeData.mVd = (int)1000 * Vganmadelta[1];
 
 
-	float speed = pInputREV;
 
-	//T theta = mIntegrator.Integrate2PiMod(1 * 2 * 3.14);
-	T theta = mIntegrator.Integrate2PiMod(speed * 2 * 3.14);
-
-	float gdArg = theta;
 	std::array<T, 2> Valphabeta = MotorMath::InvparkTransform(gdArg, Vganmadelta);
 
 	std::array<T, 3> output = MotorMath::SVM(Valphabeta, pVBus);

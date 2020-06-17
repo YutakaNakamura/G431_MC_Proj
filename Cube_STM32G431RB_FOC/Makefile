@@ -20,7 +20,8 @@ TARGET = STM32G431RB_FOC
 # debug build?
 DEBUG = 1
 # optimization
-OPT = -Og
+OPT = -O2
+#OPT = -Og
 #OPT = -O0
 
 #######################################
@@ -67,12 +68,13 @@ Src/system_stm32g4xx.c \
 SEGGER/Src/SEGGER_RTT_printf.c \
 SEGGER/Src/SEGGER_RTT.c \
 
+
 # CPP sources
 CPP_SOURCES = \
 $(wildcard Src/*.cpp) \
 $(wildcard System/Src/*.cpp) \
 $(wildcard Motor/Src/*.cpp) \
-#$(wildcard Math/Src/*.cpp) \
+$(wildcard Math/Src/*.cpp) \
 #$(wildcard System/Src/*.cpp) \
 
 # ASM sources
